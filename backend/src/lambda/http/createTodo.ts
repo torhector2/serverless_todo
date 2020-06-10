@@ -13,6 +13,7 @@ import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 
 const XAWS = AWSXRay.captureAWS(AWS)
 const todosTable = process.env.TODOS_TABLE
+const uuid = require('uuid')
 
 export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
@@ -20,7 +21,9 @@ export const handler: APIGatewayProxyHandler = async (
   const newTodo: CreateTodoRequest = JSON.parse(event.body)
   newTodo.partitionKey = 'hector'
   newTodo.sortKey = newTodo.dueDate
-  newTodo.id = makeid(16)
+  newTodo.todoId = uuid.v4()
+  newTodo.done = false
+  newTodo.createdAt = new Date()
   const docClient = new XAWS.DynamoDB.DocumentClient()
 
   // TODO: Implement creating a new TODO item
@@ -33,15 +36,4 @@ export const handler: APIGatewayProxyHandler = async (
       newItem: newTodo
     })
   }
-}
-
-function makeid(length) {
-  var result = ''
-  var characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  var charactersLength = characters.length
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength))
-  }
-  return result
 }

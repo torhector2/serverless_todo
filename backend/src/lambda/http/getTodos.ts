@@ -28,7 +28,7 @@ export const handler: APIGatewayProxyHandler = async (
   return {
     statusCode: 200,
     body: JSON.stringify({
-      todos: result
+      items: result.Items
     })
   }
 }
