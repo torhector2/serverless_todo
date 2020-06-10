@@ -20,6 +20,7 @@ export const handler: APIGatewayProxyHandler = async (
   const newTodo: CreateTodoRequest = JSON.parse(event.body)
   newTodo.partitionKey = 'hector'
   newTodo.sortKey = newTodo.dueDate
+  newTodo.id = makeid(16)
   const docClient = new XAWS.DynamoDB.DocumentClient()
 
   // TODO: Implement creating a new TODO item
@@ -32,4 +33,15 @@ export const handler: APIGatewayProxyHandler = async (
       newItem: newTodo
     })
   }
+}
+
+function makeid(length) {
+  var result = ''
+  var characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  var charactersLength = characters.length
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
+  }
+  return result
 }
